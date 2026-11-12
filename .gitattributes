@@ -1,0 +1,21 @@
+# Wszystkie pliki tekstowe trzymamy z końcami linii LF — w repo i w kopii
+# roboczej, także na Windowsie. Bez tego Git na Windowsie (core.autocrlf=true)
+# zamienia je na CRLF przy checkoucie, a skrypt bash z CRLF przestaje działać
+# ("set: pipefail\r: invalid option name").
+* text=auto eol=lf
+
+# Skrypty dla Windowsa zostają z CRLF, zgodnie z konwencją systemu.
+*.ps1 text eol=crlf
+
+# Pliki binarne — bez jakiejkolwiek konwersji.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.stl binary
+*.3mf binary
+*.db binary

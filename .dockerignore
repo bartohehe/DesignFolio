@@ -1,0 +1,16 @@
+# Wszystko, czego build kontekst nie potrzebuje — im mniej, tym szybszy build.
+.git
+.gitignore
+.claude
+.codex
+.cursor
+.impeccable
+data/
+web/node_modules/
+web/dist/
+scripts/
+README.md
+*.md
+.env
+docker-compose.yml
+Dockerfile

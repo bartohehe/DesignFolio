@@ -1,0 +1,166 @@
+@import 'tailwindcss';
+
+/*
+  JEDYNE miejsce z wartościami designu w całym projekcie.
+  Reguła: w komponentach używamy wyłącznie klas zbudowanych z tych tokenów.
+  Żadnych bg-[#1c1a17], text-[13px] ani style={{ ... }} z liczbami.
+
+  Tailwind v4 konfiguruje się w CSS, nie w tailwind.config.js — blok @theme
+  poniżej generuje utilities: --color-canvas → bg-canvas / text-canvas,
+  --text-xl → text-xl, --radius-md → rounded-md itd.
+*/
+@theme {
+  /* --- Kolory -------------------------------------------------------------
+     Tło jest ciepłym grafitem (hue ~60 w OKLCH), nie czarnym — zdjęcia
+     i skany rysunków wyglądają na nim naturalnie, a nie jak wycięte.
+     Jasność podana w OKLCH jest percepcyjna, więc odstępy między
+     powierzchniami są równomierne dla oka.                                  */
+  --color-canvas: oklch(0.19 0.008 60); /* tło strony */
+  --color-surface: oklch(0.23 0.008 60); /* karta, panel */
+  --color-raised: oklch(0.27 0.009 60); /* hover, pole formularza */
+  --color-line: oklch(0.32 0.008 60); /* włoskowe kreski, dzielniki */
+
+  /* Trzy stopnie tekstu. Wartości są dobrane tak, żeby NAJTRUDNIEJSZY
+     przypadek — drobny tekst na jaśniejszej powierzchni (surface) — przechodził
+     AA (4.5:1). Zmierzone na zbudowanej stronie, nie oszacowane. */
+  --color-ink: oklch(0.94 0.006 70); /* tekst główny — 14,1:1 na surface */
+  --color-muted: oklch(0.72 0.008 70); /* tekst drugorzędny — 6,8:1 */
+  --color-faint: oklch(0.655 0.008 70); /* etykiety mono, liczniki — 5,5:1 */
+
+  /* Jeden akcent, używany oszczędnie: aktywny filtr, focus ring, hover linku. */
+  --color-accent: oklch(0.78 0.13 72); /* bursztyn na ciemnym: ~9:1 */
+  --color-accent-dim: oklch(0.62 0.11 72); /* wypełnienia, na których leży ink */
+
+  /* Stany. Też przechodzą kontrast AA na canvas. */
+  --color-danger: oklch(0.68 0.17 25);
+  --color-success: oklch(0.72 0.13 150);
+
+  /* --- Typografia ---------------------------------------------------------
+     Trzy role: display na nagłówki, sans na treść, mono na wszystko,
+     co jest metadaną, tagiem albo liczbą. Fonty są self-hostowane
+     (paczki @fontsource-variable), więc aplikacja działa offline.           */
+  --font-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', monospace;
+
+  /* Skala 1.25 (tercja wielka). Lista jest zamknięta — jeśli jakiś rozmiar
+     tu nie występuje, to znaczy, że nie wolno go użyć.                      */
+  --text-2xs: 0.694rem;
+  --text-2xs--line-height: 1.4;
+  --text-2xs--letter-spacing: 0.04em;
+  --text-xs: 0.833rem;
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.9rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 1rem;
+  --text-base--line-height: 1.65;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.45;
+  --text-xl: 1.563rem;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 1.953rem;
+  --text-2xl--line-height: 1.2;
+  --text-2xl--letter-spacing: -0.015em;
+  --text-3xl: 2.441rem;
+  --text-3xl--line-height: 1.1;
+  --text-3xl--letter-spacing: -0.02em;
+  --text-4xl: 3.052rem;
+  --text-4xl--line-height: 1.05;
+  --text-4xl--letter-spacing: -0.025em;
+
+  /* --- Przestrzeń i kształt ----------------------------------------------
+     Tailwind mnoży --spacing przez liczbę w klasie: p-4 = 4 × 0.25rem.     */
+  --spacing: 0.25rem;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.875rem;
+
+  /* --- Ruch ---------------------------------------------------------------
+     Jedna krzywa, dwa czasy. Bez bounce, bez sprężyn.                       */
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Czasy trwania trzymamy jako zwykłe custom properties — Tailwind v4 nie ma
+   dla nich przestrzeni nazw w @theme. Używamy ich przez @utility niżej. */
+:root {
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+}
+
+/*
+  @utility to mechanizm Tailwinda v4 na własne klasy, które działają
+  z wariantami (hover:, focus-visible:). Poniższe trzy kodują zasady projektu,
+  zamiast zostawiać je w komentarzu, o którym się zapomina.
+*/
+
+/* Domyślne przejście UI: tylko właściwości, które nie wywołują reflow. */
+@utility transition-ui {
+  transition-property: transform, opacity;
+  transition-timing-function: var(--ease-out);
+  transition-duration: var(--duration-base);
+}
+
+/* Przejście kolorów — osobno, bo dotyczy tła/tekstu i ma być szybsze. */
+@utility transition-tint {
+  transition-property: color, background-color, border-color, outline-color;
+  transition-timing-function: var(--ease-out);
+  transition-duration: var(--duration-fast);
+}
+
+/* Jeden, spójny pierścień focusa dla całej aplikacji.
+   outline zamiast box-shadow: nie da się go przyciąć przez overflow: hidden. */
+@utility focus-ring {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  /* Globalny focus: widoczny zawsze, ale tylko przy nawigacji klawiaturą
+     (:focus-visible), żeby nie migał przy każdym kliknięciu myszą. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Szanujemy ustawienie systemowe. Animacje są dekoracją, nie treścią. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Pasek przewijania dopasowany do grafitu — domyślny jasny psuje wrażenie. */
+  * {
+    scrollbar-color: var(--color-line) transparent;
+    scrollbar-width: thin;
+  }
+}

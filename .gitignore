@@ -1,0 +1,32 @@
+# Stan aplikacji — baza i pliki. Nigdy do repo.
+/data/
+
+# Sekrety
+.env
+
+# Frontend
+web/node_modules/
+web/dist/*
+# ...ale sam katalog musi istnieć, żeby go:embed w web/embed.go się skompilował.
+!web/dist/.gitkeep
+
+# Binarki. Tylda: Go zostawia designfolio.exe~, gdy plik docelowy jest zajęty
+# przez działający proces.
+/designfolio
+/designfolio.exe
+/designfolio.exe~
+/out/
+
+# Kopie zapasowe robione przez scripts/backup.*
+/backups/
+
+# Narzędzia i edytory
+.idea/
+.vscode/
+
+# Lokalne ustawienia i cache narzędzi AI (Claude Code, impeccable) —
+# dotyczą tej jednej maszyny, nie projektu.
+*.local.json
+.impeccable/hook.cache.json
+*.swp
+.DS_Store

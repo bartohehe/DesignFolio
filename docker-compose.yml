@@ -1,0 +1,23 @@
+services:
+  designfolio:
+    build:
+      context: .
+      args:
+        VERSION: ${VERSION:-docker}
+    container_name: designfolio
+    restart: unless-stopped
+
+    # "127.0.0.1:" z przodu sprawia, że port jest widoczny wyłącznie z tej maszyny.
+    # Żeby wystawić aplikację na sieć domową, zmień na "8080:8080" i ustaw APP_TOKEN.
+    ports:
+      - '127.0.0.1:8080:8080'
+
+    # Cały stan aplikacji: baza i pliki. To jest to, co się backupuje.
+    volumes:
+      - ./data:/app/data
+
+    environment:
+      APP_ADDR: 0.0.0.0:8080
+      DATA_DIR: /app/data
+      APP_TOKEN: ${APP_TOKEN:-}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-512}
